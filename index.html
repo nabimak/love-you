@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Вопрос ❤️</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(135deg, #ffd6e7, #fff0f6);
+        }
+
+        .box {
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        button {
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: transform 0.2s ease;
+        }
+
+        #yes {
+            background: #ff4f81;
+            color: white;
+
+            transform: scale(1);
+        }
+
+        #no {
+            background: #ddd;
+            color: #333;
+
+            position: relative;
+        }
+
+        #yes:hover {
+            transform: scale(1.05);
+        }
+
+        .heart {
+            position: fixed;
+            bottom: -50px;
+
+            font-size: 30px;
+
+            animation: fly 3s linear forwards;
+
+            pointer-events: none;
+        }
+
+        @keyframes fly {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1 id="question">
+        Ты меня любишь? ❤️
+    </h1>
+    <div class="buttons">
+
+        <button id="yes">
+            Да ❤️
+        </button>
+
+        <button id="no">
+            Нет 😢
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const question = document.getElementById("question");
+
+    let scale = 1;
+
+
+    // =========================
+    // КНОПКА "НЕТ" УБЕГАЕТ
+    // =========================
+
+    document.addEventListener("mousemove", function(event) {
+
+        const rect = no.getBoundingClientRect();
+
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distanceX = event.clientX - centerX;
+        const distanceY = event.clientY - centerY;
+
+        const distance = Math.sqrt(
+            distanceX * distanceX +
+            distanceY * distanceY
+        );
+
+
+        // Если мышка подошла ближе чем на 130px
+        if (distance < 130) {
+
+            escape(event.clientX, event.clientY);
+
+        }
+
+    });
+
+
+    function escape(mouseX, mouseY) {
+
+        // Переводим кнопку в фиксированную позицию
+        no.style.position = "fixed";
+
+
+        const buttonWidth = no.offsetWidth;
+        const buttonHeight = no.offsetHeight;
+
+
+        // Границы экрана
+        const maxX = window.innerWidth - buttonWidth - 10;
+        const maxY = window.innerHeight - buttonHeight - 10;
+
+
+        let x;
+        let y;
+
+
+        // Ищем место, которое находится далеко от мышки
+        for (let i = 0; i < 100; i++) {
+
+            x = Math.random() * maxX;
+            y = Math.random() * maxY;
+
+
+            const newCenterX = x + buttonWidth / 2;
+            const newCenterY = y + buttonHeight / 2;
+
+
+            const dx = mouseX - newCenterX;
+            const dy = mouseY - newCenterY;
+
+
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+
+            if (distance > 250) {
+                break;
+            }
+
+        }
+
+
+        no.style.left = x + "px";
+        no.style.top = y + "px";
+
+
+        // =========================
+        // УВЕЛИЧИВАЕМ "ДА"
+        // =========================
+
+        scale += 0.15;
+
+        yes.style.transform = `scale(${scale})`;
+
+
+        // Меняем текст
+        if (scale > 1.5) {
+            question.textContent = "Ты точно хочешь нажать «Нет»? 🥺";
+        }
+
+        if (scale > 2) {
+            question.textContent = "Ну пожалуйста 😭❤️";
+        }
+
+        if (scale > 2.5) {
+            question.textContent = "Куда ты от меня убегаешь? 😂";
+        }
+
+    }
+
+
+    // =========================
+    // ЕСЛИ НАЖАЛИ "ДА"
+    // =========================
+
+    yes.addEventListener("click", function() {
+
+    question.textContent = "Я ТАК И ЗНАЛ! ❤️🥰";
+
+    yes.style.display = "none";
+    no.style.display = "none";
+
+    createHearts();
+
+});
+
+    // =========================
+    // СЕРДЕЧКИ
+    // =========================
+
+    function createHearts() {
+
+        for (let i = 0; i < 50; i++) {
+
+            setTimeout(function() {
+
+                const heart = document.createElement("div");
+
+                heart.className = "heart";
+
+                heart.textContent = "❤️";
+
+                heart.style.left =
+                    Math.random() * 100 + "vw";
+
+                heart.style.animationDuration =
+                    (2 + Math.random() * 3) + "s";
+
+                document.body.appendChild(heart);
+
+
+                setTimeout(function() {
+                    heart.remove();
+                }, 5000);
+
+            }, i * 80);
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
